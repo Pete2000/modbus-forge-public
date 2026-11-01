@@ -1,0 +1,64 @@
+{
+  "name": "modbus-forge",
+  "version": "0.2.3",
+  "private": true,
+  "description": "Windows desktop Modbus TCP and RTU debugging workbench",
+  "main": "dist-electron/main/main.js",
+  "scripts": {
+    "dev": "concurrently -k \"vite\" \"wait-on tcp:5173 && cross-env ELECTRON_RENDERER_URL=http://localhost:5173 electron .\"",
+    "typecheck": "tsc -p tsconfig.main.json --noEmit && tsc -p tsconfig.renderer.json --noEmit",
+    "build": "npm run typecheck && tsc -p tsconfig.main.json && vite build",
+    "test": "vitest run --config vitest.config.ts",
+    "test:watch": "vitest --config vitest.config.ts",
+    "package:win": "npm run build && electron-builder --win nsis --x64"
+  },
+  "build": {
+    "appId": "com.traceforge.modbusforge",
+    "productName": "Modbus Forge",
+    "directories": {
+      "output": "release"
+    },
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/@serialport/**"
+    ],
+    "npmRebuild": false,
+    "files": [
+      "dist/renderer/**/*",
+      "dist-electron/**/*",
+      "!dist-electron/**/*.test.js",
+      "!dist-electron/**/*.test.js.map",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "serialport": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
+    "electron": "^42.4.1",
+    "electron-builder": "^26.0.12",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.0",
+    "vitest": "^4.0.8",
+    "wait-on": "^9.0.1"
+  }
+}
